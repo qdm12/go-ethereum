@@ -19,7 +19,6 @@ package snapshot
 import (
 	crand "crypto/rand"
 	"encoding/binary"
-	"errors"
 	"fmt"
 	"math/rand"
 	"testing"
@@ -119,10 +118,10 @@ func TestDiskLayerExternalInvalidationFullFlatten(t *testing.T) {
 		t.Fatalf("failed to merge diff layer onto disk: %v", err)
 	}
 	// Since the base layer was modified, ensure that data retrievals on the external reference fail
-	if acc, err := ref.Account(common.HexToHash("0x01")); !errors.Is(err, ErrSnapshotStale) {
+	if acc, err := ref.Account(common.HexToHash("0x01")); err != ErrSnapshotStale {
 		t.Errorf("stale reference returned account: %#x (err: %v)", acc, err)
 	}
-	if slot, err := ref.Storage(common.HexToHash("0xa1"), common.HexToHash("0xb1")); !errors.Is(err, ErrSnapshotStale) {
+	if slot, err := ref.Storage(common.HexToHash("0xa1"), common.HexToHash("0xb1")); err != ErrSnapshotStale {
 		t.Errorf("stale reference returned storage slot: %#x (err: %v)", slot, err)
 	}
 	if n := len(snaps.layers); n != 1 {
@@ -169,10 +168,10 @@ func TestDiskLayerExternalInvalidationPartialFlatten(t *testing.T) {
 		t.Fatalf("failed to merge accumulator onto disk: %v", err)
 	}
 	// Since the base layer was modified, ensure that data retrievals on the external reference fail
-	if acc, err := ref.Account(common.HexToHash("0x01")); !errors.Is(err, ErrSnapshotStale) {
+	if acc, err := ref.Account(common.HexToHash("0x01")); err != ErrSnapshotStale {
 		t.Errorf("stale reference returned account: %#x (err: %v)", acc, err)
 	}
-	if slot, err := ref.Storage(common.HexToHash("0xa1"), common.HexToHash("0xb1")); !errors.Is(err, ErrSnapshotStale) {
+	if slot, err := ref.Storage(common.HexToHash("0xa1"), common.HexToHash("0xb1")); err != ErrSnapshotStale {
 		t.Errorf("stale reference returned storage slot: %#x (err: %v)", slot, err)
 	}
 	if n := len(snaps.layers); n != 2 {
@@ -231,10 +230,10 @@ func TestDiffLayerExternalInvalidationPartialFlatten(t *testing.T) {
 		t.Fatalf("failed to flatten diff layer into accumulator: %v", err)
 	}
 	// Since the accumulator diff layer was modified, ensure that data retrievals on the external reference fail
-	if acc, err := ref.Account(common.HexToHash("0x01")); !errors.Is(err, ErrSnapshotStale) {
+	if acc, err := ref.Account(common.HexToHash("0x01")); err != ErrSnapshotStale {
 		t.Errorf("stale reference returned account: %#x (err: %v)", acc, err)
 	}
-	if slot, err := ref.Storage(common.HexToHash("0xa1"), common.HexToHash("0xb1")); !errors.Is(err, ErrSnapshotStale) {
+	if slot, err := ref.Storage(common.HexToHash("0xa1"), common.HexToHash("0xb1")); err != ErrSnapshotStale {
 		t.Errorf("stale reference returned storage slot: %#x (err: %v)", slot, err)
 	}
 	if n := len(snaps.layers); n != 3 {

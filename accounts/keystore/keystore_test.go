@@ -17,7 +17,6 @@
 package keystore
 
 import (
-	"errors"
 	"math/rand"
 	"os"
 	"runtime"
@@ -128,7 +127,7 @@ func TestTimedUnlock(t *testing.T) {
 
 	// Signing without passphrase fails because account is locked
 	_, err = ks.SignHash(accounts.Account{Address: a1.Address}, testSigData)
-	if !errors.Is(err, ErrLocked) {
+	if err != ErrLocked {
 		t.Fatal("Signing should've failed with ErrLocked before unlocking, got ", err)
 	}
 
@@ -146,7 +145,7 @@ func TestTimedUnlock(t *testing.T) {
 	// Signing fails again after automatic locking
 	time.Sleep(250 * time.Millisecond)
 	_, err = ks.SignHash(accounts.Account{Address: a1.Address}, testSigData)
-	if !errors.Is(err, ErrLocked) {
+	if err != ErrLocked {
 		t.Fatal("Signing should've failed with ErrLocked timeout expired, got ", err)
 	}
 }
@@ -186,7 +185,7 @@ func TestOverrideUnlock(t *testing.T) {
 	// Signing fails again after automatic locking
 	time.Sleep(250 * time.Millisecond)
 	_, err = ks.SignHash(accounts.Account{Address: a1.Address}, testSigData)
-	if !errors.Is(err, ErrLocked) {
+	if err != ErrLocked {
 		t.Fatal("Signing should've failed with ErrLocked timeout expired, got ", err)
 	}
 }
@@ -207,7 +206,7 @@ func TestSignRace(t *testing.T) {
 	}
 	end := time.Now().Add(500 * time.Millisecond)
 	for time.Now().Before(end) {
-		if _, err := ks.SignHash(accounts.Account{Address: a1.Address}, testSigData); errors.Is(err, ErrLocked) {
+		if _, err := ks.SignHash(accounts.Account{Address: a1.Address}, testSigData); err == ErrLocked {
 			return
 		} else if err != nil {
 			t.Errorf("Sign error: %v", err)

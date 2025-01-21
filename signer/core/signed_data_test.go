@@ -20,7 +20,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"math/big"
 	"os"
@@ -202,7 +201,7 @@ func TestSignData(t *testing.T) {
 	if signature != nil {
 		t.Errorf("Expected nil-data, got %x", signature)
 	}
-	if !errors.Is(err, keystore.ErrDecrypt) {
+	if err != keystore.ErrDecrypt {
 		t.Errorf("Expected ErrLocked! '%v'", err)
 	}
 	control.approveCh <- "No way"
@@ -210,7 +209,7 @@ func TestSignData(t *testing.T) {
 	if signature != nil {
 		t.Errorf("Expected nil-data, got %x", signature)
 	}
-	if !errors.Is(err, core.ErrRequestDenied) {
+	if err != core.ErrRequestDenied {
 		t.Errorf("Expected ErrRequestDenied! '%v'", err)
 	}
 	// text/plain

@@ -19,7 +19,6 @@ package filters
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"math/big"
 	"strings"
 	"testing"
@@ -383,7 +382,7 @@ func TestFilters(t *testing.T) {
 		if err == nil {
 			t.Fatal("expected error")
 		}
-		if !errors.Is(err, context.DeadlineExceeded) {
+		if err != context.DeadlineExceeded {
 			t.Fatalf("expected context.DeadlineExceeded, got %v", err)
 		}
 	})

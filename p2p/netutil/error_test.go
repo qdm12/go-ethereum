@@ -17,7 +17,6 @@
 package netutil
 
 import (
-	"errors"
 	"net"
 	"testing"
 	"time"
@@ -53,8 +52,7 @@ func TestIsPacketTooBig(t *testing.T) {
 		listener.SetDeadline(time.Now().Add(1 * time.Second))
 		n, _, err := listener.ReadFrom(buf)
 		if err != nil {
-			var nerr net.Error
-			if errors.As(err, &nerr) && nerr.Timeout() {
+			if nerr, ok := err.(net.Error); ok && nerr.Timeout() {
 				continue
 			}
 			if !isPacketTooBig(err) {

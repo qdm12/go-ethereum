@@ -19,7 +19,6 @@ package keystore
 import (
 	"crypto/rand"
 	"encoding/hex"
-	"errors"
 	"fmt"
 	"path/filepath"
 	"reflect"
@@ -91,7 +90,7 @@ func TestKeyStorePassphraseDecryptionFail(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err = ks.GetKey(k1.Address, account.URL.Path, "bar"); !errors.Is(err, ErrDecrypt) {
+	if _, err = ks.GetKey(k1.Address, account.URL.Path, "bar"); err != ErrDecrypt {
 		t.Fatalf("wrong error for invalid password\ngot %q\nwant %q", err, ErrDecrypt)
 	}
 }

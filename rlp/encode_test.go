@@ -476,7 +476,7 @@ func TestEncodeToReaderPiecewise(t *testing.T) {
 			}
 			n, err := r.Read(output[start:end])
 			end = start + n
-			if errors.Is(err, io.EOF) {
+			if err == io.EOF {
 				break
 			} else if err != nil {
 				return nil, err

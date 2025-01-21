@@ -19,7 +19,6 @@ package rpc
 import (
 	"bufio"
 	"bytes"
-	"errors"
 	"io"
 	"net"
 	"os"
@@ -193,8 +192,7 @@ func TestServerBatchResponseSizeLimit(t *testing.T) {
 			continue
 		}
 		// After two, we expect an error.
-		var re Error
-		ok := errors.As(batch[i].Error, &re)
+		re, ok := batch[i].Error.(Error)
 		if !ok {
 			t.Fatalf("batch elem %d has wrong error: %v", i, batch[i].Error)
 		}

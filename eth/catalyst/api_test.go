@@ -1295,9 +1295,7 @@ func TestNilWithdrawals(t *testing.T) {
 			status, err = api.NewPayloadV2(*execData.ExecutionPayload)
 		}
 		if err != nil {
-			engineAPIErr := new(engine.EngineAPIError)
-			_ = errors.As(err, &engineAPIErr)
-			t.Fatalf("error validating payload: %v", engineAPIErr.ErrorData())
+			t.Fatalf("error validating payload: %v", err.(*engine.EngineAPIError).ErrorData())
 		} else if status.Status != engine.VALID {
 			t.Fatalf("invalid payload")
 		}
@@ -1646,9 +1644,7 @@ func TestParentBeaconBlockRoot(t *testing.T) {
 	}
 	resp, err := api.ForkchoiceUpdatedV3(fcState, &blockParams)
 	if err != nil {
-		engineAPIErr := new(engine.EngineAPIError)
-		_ = errors.As(err, &engineAPIErr)
-		t.Fatalf("error preparing payload, err=%v", engineAPIErr.ErrorData())
+		t.Fatalf("error preparing payload, err=%v", err.(*engine.EngineAPIError).ErrorData())
 	}
 	if resp.PayloadStatus.Status != engine.VALID {
 		t.Fatalf("unexpected status (got: %s, want: %s)", resp.PayloadStatus.Status, engine.VALID)
@@ -1679,9 +1675,7 @@ func TestParentBeaconBlockRoot(t *testing.T) {
 	fcState.HeadBlockHash = execData.ExecutionPayload.BlockHash
 	resp, err = api.ForkchoiceUpdatedV3(fcState, nil)
 	if err != nil {
-		engineAPIErr := new(engine.EngineAPIError)
-		_ = errors.As(err, &engineAPIErr)
-		t.Fatalf("error preparing payload, err=%v", engineAPIErr.ErrorData())
+		t.Fatalf("error preparing payload, err=%v", err.(*engine.EngineAPIError).ErrorData())
 	}
 	if resp.PayloadStatus.Status != engine.VALID {
 		t.Fatalf("unexpected status (got: %s, want: %s)", resp.PayloadStatus.Status, engine.VALID)

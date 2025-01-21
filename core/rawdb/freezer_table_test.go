@@ -879,7 +879,7 @@ func checkRetrieveError(t *testing.T, f *freezerTable, items map[uint64]error) {
 		if err == nil {
 			t.Fatalf("unexpected value %x for item %d, want error %v", item, value, wantError)
 		}
-		if !errors.Is(err, wantError) {
+		if err != wantError {
 			t.Fatalf("wrong error for item %d: %v", item, err)
 		}
 	}
@@ -1362,8 +1362,7 @@ func runRandTest(rt randTest) bool {
 
 func TestRandom(t *testing.T) {
 	if err := quick.Check(runRandTest, nil); err != nil {
-		cerr := new(quick.CheckError)
-		if errors.As(err, &cerr) {
+		if cerr, ok := err.(*quick.CheckError); ok {
 			t.Fatalf("random test iteration %d failed: %s", cerr.Count, spew.Sdump(cerr.In))
 		}
 		t.Fatal(err)

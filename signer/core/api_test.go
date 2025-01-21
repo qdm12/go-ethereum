@@ -19,7 +19,6 @@ package core_test
 import (
 	"bytes"
 	"context"
-	"errors"
 	"fmt"
 	"math/big"
 	"os"
@@ -156,7 +155,7 @@ func failCreateAccountWithPassword(ui *headlessUi, api *core.SignerAPI, password
 func failCreateAccount(ui *headlessUi, api *core.SignerAPI, t *testing.T) {
 	ui.approveCh <- "N"
 	addr, err := api.New(context.Background())
-	if !errors.Is(err, core.ErrRequestDenied) {
+	if err != core.ErrRequestDenied {
 		t.Fatal(err)
 	}
 	if addr != (common.Address{}) {
@@ -213,7 +212,7 @@ func TestNewAcc(t *testing.T) {
 	if len(list) != 0 {
 		t.Fatalf("List should be empty")
 	}
-	if !errors.Is(err, core.ErrRequestDenied) {
+	if err != core.ErrRequestDenied {
 		t.Fatal("Expected deny")
 	}
 }
@@ -265,7 +264,7 @@ func TestSignTx(t *testing.T) {
 	if res != nil {
 		t.Errorf("Expected nil-response, got %v", res)
 	}
-	if !errors.Is(err, keystore.ErrDecrypt) {
+	if err != keystore.ErrDecrypt {
 		t.Errorf("Expected ErrLocked! %v", err)
 	}
 	control.approveCh <- "No way"
@@ -273,7 +272,7 @@ func TestSignTx(t *testing.T) {
 	if res != nil {
 		t.Errorf("Expected nil-response, got %v", res)
 	}
-	if !errors.Is(err, core.ErrRequestDenied) {
+	if err != core.ErrRequestDenied {
 		t.Errorf("Expected ErrRequestDenied! %v", err)
 	}
 	// Sign with correct password

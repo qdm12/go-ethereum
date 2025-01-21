@@ -18,7 +18,6 @@ package vm
 
 import (
 	"encoding/hex"
-	"errors"
 	"reflect"
 	"testing"
 
@@ -67,7 +66,7 @@ func TestEOFMarshaling(t *testing.T) {
 			got Container
 		)
 		t.Logf("b: %#x", b)
-		if err := got.UnmarshalBinary(b, true); err != nil && !errors.Is(err, test.err) {
+		if err := got.UnmarshalBinary(b, true); err != nil && err != test.err {
 			t.Fatalf("test %d: got error \"%v\", want \"%v\"", i, err, test.err)
 		}
 		if !reflect.DeepEqual(got, test.want) {

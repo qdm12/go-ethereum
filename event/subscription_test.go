@@ -56,7 +56,7 @@ loop:
 				t.Fatalf("wrong int %d, want %d", got, want)
 			}
 		case err := <-sub.Err():
-			if !errors.Is(err, errInts) {
+			if err != errInts {
 				t.Fatalf("wrong error: got %q, want %q", err, errInts)
 			}
 			if want != 2 {

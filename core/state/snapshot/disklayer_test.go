@@ -18,7 +18,6 @@ package snapshot
 
 import (
 	"bytes"
-	"errors"
 	"testing"
 
 	"github.com/VictoriaMetrics/fastcache"
@@ -314,7 +313,7 @@ func TestDiskPartialMerge(t *testing.T) {
 		assertAccount := func(account common.Hash, data []byte) {
 			t.Helper()
 			blob, err := base.AccountRLP(account)
-			if bytes.Compare(account[:], genMarker) > 0 && !errors.Is(err, ErrNotCoveredYet) {
+			if bytes.Compare(account[:], genMarker) > 0 && err != ErrNotCoveredYet {
 				t.Fatalf("test %d: post-marker (%x) account access (%x) succeeded: %x", i, genMarker, account, blob)
 			}
 			if bytes.Compare(account[:], genMarker) <= 0 && !bytes.Equal(blob, data) {
@@ -330,7 +329,7 @@ func TestDiskPartialMerge(t *testing.T) {
 		assertStorage := func(account common.Hash, slot common.Hash, data []byte) {
 			t.Helper()
 			blob, err := base.Storage(account, slot)
-			if bytes.Compare(append(account[:], slot[:]...), genMarker) > 0 && !errors.Is(err, ErrNotCoveredYet) {
+			if bytes.Compare(append(account[:], slot[:]...), genMarker) > 0 && err != ErrNotCoveredYet {
 				t.Fatalf("test %d: post-marker (%x) storage access (%x:%x) succeeded: %x", i, genMarker, account, slot, blob)
 			}
 			if bytes.Compare(append(account[:], slot[:]...), genMarker) <= 0 && !bytes.Equal(blob, data) {
