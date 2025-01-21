@@ -20,6 +20,7 @@
 package netutil
 
 import (
+	"errors"
 	"net"
 	"os"
 	"syscall"
@@ -31,8 +32,10 @@ const _WSAEMSGSIZE = syscall.Errno(10040)
 // fit the receive buffer. On Windows, WSARecvFrom returns
 // code WSAEMSGSIZE and no data if this happens.
 func isPacketTooBig(err error) bool {
-	if opErr, ok := err.(*net.OpError); ok {
-		if scErr, ok := opErr.Err.(*os.SyscallError); ok {
+	opErr := new(net.OpError)
+	if errors.As(err, &opErr) {
+		scErr := new(os.SyscallError)
+		if errors.As(opErr.Err, &scErr) {
 			return scErr.Err == _WSAEMSGSIZE
 		}
 		return opErr.Err == _WSAEMSGSIZE

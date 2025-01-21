@@ -169,11 +169,13 @@ func (b *bridge) Send(call jsre.Call) (goja.Value, error) {
 		} else {
 			code := -32603
 			var data interface{}
-			if err, ok := err.(rpc.Error); ok {
-				code = err.ErrorCode()
+			var rcpErr rpc.Error
+			if errors.As(err, &rcpErr) {
+				code = rcpErr.ErrorCode()
 			}
-			if err, ok := err.(rpc.DataError); ok {
-				data = err.ErrorData()
+			var rcpDataErr rpc.DataError
+			if errors.As(err, &rcpDataErr) {
+				data = rcpDataErr.ErrorData()
 			}
 			setError(resp, code, err.Error(), data)
 		}
