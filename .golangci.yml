@@ -66,6 +66,9 @@ issues:
     - path: _test\\.go
       linters:
         - errorlint
+    - path: rlp\/decode\.go
+      linters:
+        - errorlint
     - path: crypto/bn256/
       linters:
         - revive

@@ -327,7 +327,7 @@ func decodeSliceElems(s *Stream, val reflect.Value, elemdec decoder) error {
 			val.SetLen(i + 1)
 		}
 		// decode into element
-		if err := elemdec(s, val.Index(i)); errors.Is(err, EOL) {
+		if err := elemdec(s, val.Index(i)); err == EOL {
 			break
 		} else if err != nil {
 			return addErrorContext(err, fmt.Sprint("[", i, "]"))
@@ -346,7 +346,7 @@ func decodeListArray(s *Stream, val reflect.Value, elemdec decoder) error {
 	vlen := val.Len()
 	i := 0
 	for ; i < vlen; i++ {
-		if err := elemdec(s, val.Index(i)); errors.Is(err, EOL) {
+		if err := elemdec(s, val.Index(i)); err == EOL {
 			break
 		} else if err != nil {
 			return addErrorContext(err, fmt.Sprint("[", i, "]"))
@@ -418,7 +418,7 @@ func makeStructDecoder(typ reflect.Type) (decoder, error) {
 		}
 		for i, f := range fields {
 			err := f.info.decoder(s, val.Field(f.index))
-			if errors.Is(err, EOL) {
+			if err == EOL {
 				if f.optional {
 					// The field is optional, so reaching the end of the list before
 					// reaching the last field is acceptable. All remaining undecoded
@@ -758,7 +758,7 @@ func (s *Stream) uint(maxbits int) (uint64, error) {
 		}
 		v, err := s.readUint(byte(size))
 		switch {
-		case errors.Is(err, ErrCanonSize):
+		case err == ErrCanonSize:
 			// Adjust error because we're not reading a size right now.
 			return 0, ErrCanonInt
 		case err != nil:
@@ -1043,10 +1043,10 @@ func (s *Stream) readKind() (kind Kind, size uint64, err error) {
 		if len(s.stack) == 0 {
 			// At toplevel, Adjust the error to actual EOF. io.EOF is
 			// used by callers to determine when to stop decoding.
-			switch {
-			case errors.Is(err, io.ErrUnexpectedEOF):
+			switch err {
+			case io.ErrUnexpectedEOF:
 				err = io.EOF
-			case errors.Is(err, ErrValueTooLarge):
+			case ErrValueTooLarge:
 				err = io.EOF
 			}
 		}
@@ -1131,7 +1131,7 @@ func (s *Stream) readFull(buf []byte) (err error) {
 		nn, err = s.r.Read(buf[n:])
 		n += nn
 	}
-	if errors.Is(err, io.EOF) {
+	if err == io.EOF {
 		if n < len(buf) {
 			err = io.ErrUnexpectedEOF
 		} else {
@@ -1149,7 +1149,7 @@ func (s *Stream) readByte() (byte, error) {
 		return 0, err
 	}
 	b, err := s.r.ReadByte()
-	if errors.Is(err, io.EOF) {
+	if err == io.EOF {
 		err = io.ErrUnexpectedEOF
 	}
 	return b, err
